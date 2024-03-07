@@ -14,16 +14,18 @@ class PosterItemInfo(BaseModel):
     biz_name = ""
     keyword = ""
     template_id = ""
+    is_ai = False
+    is_segmentation = False
 
-    def __init__(self, biz_name="", keyword="", template_id=""):
-        super().__init__(biz_name=biz_name, keyword=keyword, template_id=template_id)
+    def __init__(self, biz_name="", keyword="", template_id="", is_ai = False, is_segmentation = False):
+        super().__init__(biz_name=biz_name, keyword=keyword, template_id=template_id, is_ai = is_ai, is_segmentation, is_segmentation)
 
     def keys(self):
         '''
         当对实例化对象使用dict(obj)的时候, 会调用这个方法,这里定义了字典的键, 其对应的值将以obj['name']的形式取,
         但是对象是不可以以这种方式取值的, 为了支持这种取值, 可以为类增加一个方法
         '''
-        return ('biz_name', 'keyword', 'template_id')
+        return ('biz_name', 'keyword', 'template_id', 'is_ai', 'is_segmentation')
 
     def __getitem__(self, item):
         '''
