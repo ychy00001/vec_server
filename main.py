@@ -22,7 +22,7 @@ from vec_call.run import similarity_search as _vec_similarity_search, add as _ve
 from vec_call.run_dim_val import similarity_search as _dim_val_similarity_search, add as _dim_val_add, \
     clean as _dim_val_clean
 from vec_call.run_func import similarity_search as _func_similarity_search, add as _func_add, clean as _func_clean
-from vec_call.run_poster import similarity_search as _poster_similarity_search, add as _poster_add, clean as _poster_clean
+from vec_call.run_poster import similarity_search as _poster_similarity_search, add as _poster_add, clean as _poster_clean, update as _poster_update, delete as _poster_delete
 from vec_call.vec_item_info import VecItemInfo
 from vec_call.dim_val_item_info import DimValItemInfo
 from vec_call.func_item_info import FuncItemInfo
@@ -291,6 +291,32 @@ async def poster_clean():
     _poster_clean()
     return ret_success()
 
+@app.post("/poster_update")
+async def poster_insert(posterItem: PosterItemInfo):
+    '''
+    更新向量库条目
+    Args:
+        {
+          'biz_name': '节日', 
+          'keyword': '新年', 
+          'template_id': 1,
+          'is_ai': true,
+          'is_segmentation': false,
+        }
+    Returns: "success"
+    '''
+    _poster_update(posterItem)
+    return ret_success()
+
+
+@app.post("/poster_delete")
+async def poster_clean(posterItem: PosterItemInfo):
+    '''
+    删除poster向量库条目
+    Returns:
+    '''
+    _poster_delete(posterItem)
+    return ret_success()
 
 if __name__ == "__main__":
     uvicorn.run(app, host=LLMPARSER_HOST, port=LLMPARSER_PORT)

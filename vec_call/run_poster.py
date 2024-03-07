@@ -46,12 +46,10 @@ def similarity_search(item_list: List[str], item_filter: Optional[Dict[str, str]
     return search_result
 
 
-def update(origin_item: PosterItemInfo, update_item: PosterItemInfo):
-    origin_item.reload_item_type()
-    update_item.reload_item_type()
-    if origin_item.get_id() != update_item.get_id():
-        raise Exception('id值不同，无法更改: origin_id:{} update_id:{}'.format(origin_item.get_id(), update_item.get_id()))
-    chroma_instance.cw_poster_db.update_document(origin_item.get_id(), update_item.to_document())
+def update( update_item: PosterItemInfo):
+    if !origin_item.get_id() :
+        raise Exception('id值异常，无法更改: update_id:{}'.format( update_item.get_id()))
+    chroma_instance.cw_poster_db.update_document(update_item.get_id(), update_item.to_document())
 
 
 def delete(del_item: PosterItemInfo):
