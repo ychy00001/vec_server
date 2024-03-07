@@ -15,8 +15,8 @@ from fastapi import FastAPI, HTTPException, Body
 
 from config.config_parse import LLMPARSER_HOST, LLMPARSER_PORT
 
-from services_router import (query2sql_service, preset_query_service,
-                            solved_query_service, plugin_call_service)
+# from services_router import (query2sql_service, preset_query_service,
+#                             solved_query_service, plugin_call_service)
 
 from vec_call.run import similarity_search as _vec_similarity_search, add as _vec_add, clean as _vec_clean
 from vec_call.run_dim_val import similarity_search as _dim_val_similarity_search, add as _dim_val_add, \
@@ -37,10 +37,10 @@ logger = logging.getLogger("uvicorn")
 def read_health():
     return {"status": "Healthy"}
 
-app.include_router(preset_query_service.router)
-app.include_router(solved_query_service.router)
-app.include_router(query2sql_service.router)
-app.include_router(plugin_call_service.router)
+# app.include_router(preset_query_service.router)
+# app.include_router(solved_query_service.router)
+# app.include_router(query2sql_service.router)
+# app.include_router(plugin_call_service.router)
 
 
 @app.post("/vec_similarity_search")
@@ -231,7 +231,7 @@ async def dim_val_clean():
     return ret_success()
 
 @app.post("/poster_similarity_search")
-async def poster_similarity_search(query_text_list: List[str], n_results: Annotated[int, Body()], query_filter: Optional[Dict[str, str]] = None):
+async def poster_similarity_search(query_text_list: List[str], n_results: Annotated[int, Body()], query_filter: Optional[Dict[str, object]] = None):
     logger.info(f"poster_similarity_search, n_result: {n_results}")
     '''
     Args:
@@ -256,14 +256,14 @@ async def poster_similarity_search(query_text_list: List[str], n_results: Annota
         ]
 
     '''
-    from chromadb.errors import NoIndexException
-    try:
-        logger.info(f"poster_similarity_search, n_result: {n_results}")
-        if n_results == None:
-            n_results = 1
-        parsed_retrieval_res_format = _poster_similarity_search(query_text_list, query_filter, n_results)
-    except NoIndexException:
-        return ret_error(message="索引未找到，数据库可能已被删除")
+    # from chromadb.errors import NoIndexException
+    # try:
+    logger.info(f"poster_similarity_search, n_result: {n_results}")
+    if n_results == None:
+        n_results = 1
+    parsed_retrieval_res_format = _poster_similarity_search(query_text_list, query_filter, n_results)
+    # except Exception:
+    #     return ret_error(message="索引未找到，数据库可能已被删除")
     return ret_success(parsed_retrieval_res_format)
 
 

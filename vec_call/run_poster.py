@@ -13,8 +13,8 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from vec_call.poster_item_info import PosterItemInfo
 
-
 logger = logging.getLogger("uvicorn")
+
 
 def add(item_list: List[PosterItemInfo]):
     insert_list = []
@@ -22,36 +22,50 @@ def add(item_list: List[PosterItemInfo]):
     id_list = []
     for item in item_list:
         insert_list.append(item.keyword)
+        logger.info(f"add meta:{item.get_meta_dict()}")
         meta_list.append(item.get_meta_dict())
         id_list.append(item.get_id())
     # 根据原始数据填充变成向量库需要的数据
+    logger.info(f"meta-list:{meta_list}")
     chroma_instance.cw_poster_db.add_texts(insert_list, meta_list, id_list)
     chroma_instance.cw_poster_db.persist()
 
 
-def similarity_search(item_list: List[str], item_filter: Optional[Dict[str, str]] = None, n_results: int = 1):
+def similarity_search(item_list: List[str], item_filter: Optional[Dict[str, object]] = None, n_results: int = 1):
     search_result = []
     db_size = chroma_instance.cw_poster_db._collection.count()
     fetch_k = db_size if db_size < 10 else 10
     logger.info(f"poster_db_size:{db_size}")
     n_results = n_results if n_results < db_size else db_size
     logger.info(f"poster_n_results: {n_results}", )
+    metaList = []
+    for key in item_filter:
+        metaList.append({
+            key: item_filter[key]
+        })
+    if len(metaList) > 1:
+        whereMeta = {
+            "$and": metaList
+        }
+    else:
+        whereMeta = item_filter
+
+    logger.info(f"where meta: {whereMeta}")
     for item in item_list:
         # item_result = chroma_instance.cw_poster_db.similarity_search(item, n_results, item_filter)
         item_result = chroma_instance.cw_poster_db.max_marginal_relevance_search(item, k=n_results, fetch_k=fetch_k,
-                                                                              lambda_mult=0.9,
-                                                                              filter=item_filter)
+                                                                                 lambda_mult=0.9,
+                                                                                 filter=whereMeta)
         search_result.append({"origin_keyword": item, "search": item_result})
 
     return search_result
 
 
-def update( update_item: PosterItemInfo):
-    if origin_item and origin_item.get_id() > 0 :
+def update(update_item: PosterItemInfo):
+    if origin_item and origin_item.get_id() > 0:
         chroma_instance.cw_poster_db.update_document(update_item.get_id(), update_item.to_document())
     else:
-        raise Exception('id值异常，无法更改: update_id:{}'.format( update_item.get_id()))
-
+        raise Exception('id值异常，无法更改: update_id:{}'.format(update_item.get_id()))
 
 
 def delete(del_item: PosterItemInfo):

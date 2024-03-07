@@ -10,6 +10,7 @@ from langchain.vectorstores import Chroma
 from run_config import CHROMA_DB_PERSIST_PATH, ENV_CONFIG
 import os
 import sys
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -17,13 +18,13 @@ from util.logging_utils import logger
 
 from config.config_parse import CHROMA_DB_PERSIST_PATH
 
-client = chromadb.Client(
-    Settings(
-        chroma_db_impl="duckdb+parquet",
-        persist_directory=CHROMA_DB_PERSIST_PATH,  # Optional, defaults to .chromadb/ in the current directory
-    )
-)
 
+# client = chromadb.Client(
+#     Settings(
+#         chroma_db_impl="duckdb+parquet",
+#         persist_directory=CHROMA_DB_PERSIST_PATH,  # Optional, defaults to .chromadb/ in the current directory
+#     )
+# )
 
 def empty_chroma_collection_2(collection: Collection):
     collection_name = collection.name
@@ -44,42 +45,40 @@ def empty_chroma_collection_2(collection: Collection):
     return new_collection
 
 
-def empty_chroma_collection(collection:Collection) -> None:
+def empty_chroma_collection(collection: Collection) -> None:
     collection.delete()
 
 
-def add_chroma_collection(collection:Collection,
-                            queries:List[str],
-                            query_ids:List[str],
-                            metadatas:List[Mapping[str, str]]=None
-                            ) -> None:
-
+def add_chroma_collection(collection: Collection,
+                          queries: List[str],
+                          query_ids: List[str],
+                          metadatas: List[Mapping[str, str]] = None
+                          ) -> None:
     collection.add(documents=queries,
-                    ids=query_ids,
-                    metadatas=metadatas)
+                   ids=query_ids,
+                   metadatas=metadatas)
 
 
-def update_chroma_collection(collection:Collection,
-                                queries:List[str],
-                                query_ids:List[str],
-                                metadatas:List[Mapping[str, str]]=None
-                                ) -> None:
-
+def update_chroma_collection(collection: Collection,
+                             queries: List[str],
+                             query_ids: List[str],
+                             metadatas: List[Mapping[str, str]] = None
+                             ) -> None:
     collection.update(documents=queries,
-                        ids=query_ids,
-                        metadatas=metadatas)
+                      ids=query_ids,
+                      metadatas=metadatas)
 
 
-def query_chroma_collection(collection:Collection, query_texts:List[str],
-                            filter_condition:Mapping[str,str]=None, n_results:int=10):
+def query_chroma_collection(collection: Collection, query_texts: List[str],
+                            filter_condition: Mapping[str, str] = None, n_results: int = 10):
     outer_opt = '$and'
     inner_opt = '$eq'
 
     if filter_condition is not None:
-        if len(filter_condition)==1:
+        if len(filter_condition) == 1:
             outer_filter = filter_condition
         else:
-            inner_filter = [{_k: {inner_opt:_v}} for _k, _v in filter_condition.items()]
+            inner_filter = [{_k: {inner_opt: _v}} for _k, _v in filter_condition.items()]
             outer_filter = {outer_opt: inner_filter}
     else:
         outer_filter = None
@@ -89,7 +88,7 @@ def query_chroma_collection(collection:Collection, query_texts:List[str],
     return res
 
 
-def parse_retrieval_chroma_collection_query(res:List[Mapping[str, Any]]):
+def parse_retrieval_chroma_collection_query(res: List[Mapping[str, Any]]):
     parsed_res = [[] for _ in range(0, len(res['ids']))]
 
     retrieval_ids = res['ids']
@@ -118,7 +117,8 @@ def parse_retrieval_chroma_collection_query(res:List[Mapping[str, Any]]):
 
     return parsed_res
 
-def chroma_collection_query_retrieval_format(query_list:List[str], retrieval_list:List[Mapping[str, Any]]):
+
+def chroma_collection_query_retrieval_format(query_list: List[str], retrieval_list: List[Mapping[str, Any]]):
     res = []
     for query_idx in range(0, len(query_list)):
         query = query_list[query_idx]
@@ -132,37 +132,43 @@ def chroma_collection_query_retrieval_format(query_list:List[str], retrieval_lis
     return res
 
 
-def delete_chroma_collection_by_ids(collection:Collection, query_ids:List[str]) -> None:
+def delete_chroma_collection_by_ids(collection: Collection, query_ids: List[str]) -> None:
     collection.delete(ids=query_ids)
 
-def get_chroma_collection_by_ids(collection:Collection, query_ids:List[str]):
+
+def get_chroma_collection_by_ids(collection: Collection, query_ids: List[str]):
     res = collection.get(ids=query_ids)
 
     return res
 
-def get_chroma_collection_size(collection:Collection) -> int:
+
+def get_chroma_collection_size(collection: Collection) -> int:
     return collection.count()
 
 
 ##################cw_chroma配置，上面的代码为supersonic的对象##########################
 def reload_vec_db():
     return Chroma(collection_name="cw_vec", persist_directory=CHROMA_DB_PERSIST_PATH + "_cw",
-                    embedding_function=embedding_function)
+                  embedding_function=embedding_function)
+
 
 def reload_func_db():
     return Chroma(collection_name="cw_func", persist_directory=CHROMA_DB_PERSIST_PATH + "_cw",
-                    embedding_function=embedding_function)
+                  embedding_function=embedding_function)
+
 
 def reload_dim_val_db():
     return Chroma(collection_name="cw_dim_val", persist_directory=CHROMA_DB_PERSIST_PATH + "_cw",
-                    embedding_function=embedding_function)
+                  embedding_function=embedding_function)
+
 
 def reload_poster_db():
     return Chroma(collection_name="cw_poster", persist_directory=CHROMA_DB_PERSIST_PATH + "_cw",
-                    embedding_function=embedding_function)
+                  embedding_function=embedding_function)
 
 
 embedding_function = SentenceTransformerEmbeddings(model_name=ENV_CONFIG['HF_TEXT2VEC_MODEL_NAME'])
+client = Chroma(persist_directory=CHROMA_DB_PERSIST_PATH, embedding_function=embedding_function)
 
 # 维度指标数据库
 cw_vec_db = reload_vec_db()

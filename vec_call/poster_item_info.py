@@ -17,7 +17,7 @@ class PosterItemInfo(BaseModel):
     is_ai = False
     is_segmentation = False
 
-    def __init__(self, biz_name="", keyword="", template_id="", is_ai = False, is_segmentation = False):
+    def __init__(self, biz_name="", keyword="", template_id="", is_ai=False, is_segmentation=False):
         super().__init__(biz_name=biz_name, keyword=keyword, template_id=template_id, is_ai=is_ai, is_segmentation=is_segmentation)
 
     def keys(self):
@@ -60,10 +60,9 @@ class PosterItemInfo(BaseModel):
 
 
 if __name__ == '__main__':
-    a = PosterItemInfo(biz_name="节日", keyword="春节、新年、喜庆", template_id="1")
+    a = PosterItemInfo(biz_name="节日", keyword="春节、新年、喜庆", template_id=1, is_ai=True, is_segmentation=False)
     r = dict(a)
     print(r)
     c = PosterItemInfo()
     objDictTool.to_obj(c, **r)
-    print(c.dim_value)
     print(c.get_meta_dict())

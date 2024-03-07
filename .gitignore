@@ -22,3 +22,5 @@ package-lock.json
 # testing
 **/.ipynb_checkpoints/
 .DS_Store
+chm_db
+chm_db_cw
