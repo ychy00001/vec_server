@@ -18,7 +18,7 @@ class PosterItemInfo(BaseModel):
     is_segmentation = False
 
     def __init__(self, biz_name="", keyword="", template_id="", is_ai = False, is_segmentation = False):
-        super().__init__(biz_name=biz_name, keyword=keyword, template_id=template_id, is_ai = is_ai, is_segmentation, is_segmentation)
+        super().__init__(biz_name=biz_name, keyword=keyword, template_id=template_id, is_ai=is_ai, is_segmentation=is_segmentation)
 
     def keys(self):
         '''
