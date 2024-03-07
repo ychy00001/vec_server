@@ -1,0 +1,24 @@
+__pycache__/
+*.py[cod]
+*$py.class
+
+.env
+env/
+.venv
+*venv/
+.vscode/
+.idea/
+node_modules
+WORKSPACE/*
+*.code-workspace
+# probably mounted data
+# docs generation
+_book/
+streamlit/
+# 3rd party
+package.json
+package-lock.json
+*cookies.json
+# testing
+**/.ipynb_checkpoints/
+.DS_Store
