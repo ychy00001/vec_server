@@ -7,7 +7,7 @@ from chromadb.config import Settings
 from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 from langchain.vectorstores import Chroma
 
-from run_config import CHROMA_DB_PERSIST_PATH, HF_TEXT2VEC_MODEL_NAME
+from run_config import CHROMA_DB_PERSIST_PATH, ENV_CONFIG
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -162,7 +162,7 @@ def reload_poster_db():
                     embedding_function=embedding_function)
 
 
-embedding_function = SentenceTransformerEmbeddings(model_name=HF_TEXT2VEC_MODEL_NAME)
+embedding_function = SentenceTransformerEmbeddings(model_name=ENV_CONFIG['HF_TEXT2VEC_MODEL_NAME'])
 
 # 维度指标数据库
 cw_vec_db = reload_vec_db()
