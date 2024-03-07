@@ -47,9 +47,11 @@ def similarity_search(item_list: List[str], item_filter: Optional[Dict[str, str]
 
 
 def update( update_item: PosterItemInfo):
-    if !origin_item.get_id() :
+    if origin_item and origin_item.get_id() > 0 :
+        chroma_instance.cw_poster_db.update_document(update_item.get_id(), update_item.to_document())
+    else:
         raise Exception('id值异常，无法更改: update_id:{}'.format( update_item.get_id()))
-    chroma_instance.cw_poster_db.update_document(update_item.get_id(), update_item.to_document())
+
 
 
 def delete(del_item: PosterItemInfo):
