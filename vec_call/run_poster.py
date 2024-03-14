@@ -53,9 +53,10 @@ def similarity_search(item_list: List[str], item_filter: Optional[Dict[str, obje
     logger.info(f"where meta: {whereMeta}")
     for item in item_list:
         # item_result = chroma_instance.cw_poster_db.similarity_search(item, n_results, item_filter)
-        item_result = chroma_instance.cw_poster_db.max_marginal_relevance_search(item, k=n_results, fetch_k=fetch_k,
-                                                                                 lambda_mult=0.9,
-                                                                                 filter=whereMeta)
+        item_result = chroma_instance.cw_poster_db.similarity_search_with_score(item, n_results, whereMeta)
+        # item_result = chroma_instance.cw_poster_db.max_marginal_relevance_search(item, k=n_results, fetch_k=fetch_k,
+                                                                                #  lambda_mult=0.9,
+                                                                                #  filter=whereMeta)
         search_result.append({"origin_keyword": item, "search": item_result})
 
     return search_result
